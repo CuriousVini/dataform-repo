@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: salesforce
+    database: bq-dataworkeragent-test
+    schema: salesforce_raw
+    description: "Salesforce raw data source"
+    tables:
+      - name: AccountFeed
+        description: "Account Feed"
+      - name: AccountContactRole
+        description: "Account Contact Role"
