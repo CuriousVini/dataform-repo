@@ -1,0 +1,45 @@
+apiVersion: orchestration.google.com/v1alpha1
+kind: Deployment
+metadata:
+  name: salesforce-pipeline
+spec:
+  resources:
+    - name: salesforce-cleansed-dataset
+      type: bigquery.googleapis.com/Dataset
+      properties:
+        datasetReference:
+          projectId: bq-dataworkeragent-test
+          datasetId: salesforce_cleansed
+        location: us-central1
+
+    - name: salesforce-ingestion-transfer
+      type: bigquerydatatransfer.googleapis.com/TransferConfig
+      properties:
+        displayName: Salesforce Ingestion
+        dataSourceId: salesforce
+        destinationDatasetId: salesforce_raw
+        schedule: "every 24 hours"
+        params:
+          connector.clientId: "${_DEPLOY_VAR_SALESFORCE_CLIENT_ID}"
+          connector.clientSecret: "${_DEPLOY_VAR_SALESFORCE_CLIENT_SECRET}"
+          connector.myDomain: "${_DEPLOY_VAR_SALESFORCE_MY_DOMAIN}"
+
+    - name: salesforce-release-config
+      type: dataform.googleapis.com/ReleaseConfig
+      properties:
+        parent: projects/bq-dataworkeragent-test/locations/us-central1/repositories/salesforce_dbt_repo
+        releaseConfigId: salesforce_cleanse_release
+        releaseConfig:
+          gitCommitish: main
+          codeCompilationConfig:
+            defaultDatabase: bq-dataworkeragent-test
+            defaultSchema: salesforce_cleansed
+
+    - name: salesforce-workflow-config
+      type: dataform.googleapis.com/WorkflowConfig
+      properties:
+        parent: projects/bq-dataworkeragent-test/locations/us-central1/repositories/salesforce_dbt_repo
+        workflowConfigId: salesforce_cleanse_workflow
+        workflowConfig:
+          releaseConfig: projects/bq-dataworkeragent-test/locations/us-central1/repositories/salesforce_dbt_repo/releaseConfigs/salesforce_cleanse_release
+          cronSchedule: "0 * * * *"

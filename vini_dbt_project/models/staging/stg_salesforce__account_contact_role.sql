@@ -7,8 +7,11 @@ cleansed as (
         AccountId as account_id,
         ContactId as contact_id,
         Role as role,
-        CreatedDate as created_at
-        -- Add other fields as needed
+        IsPrimary as is_primary,
+        CreatedDate as created_at,
+        LastModifiedDate as last_modified_at,
+        SystemModstamp as system_modstamp
     from source
+    where not IsDeleted
 )
 select * from cleansed
