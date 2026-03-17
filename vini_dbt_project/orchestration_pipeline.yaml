@@ -1,0 +1,26 @@
+pipelineId: salesforce-clv-pipeline
+description: Orchestrates dbt models to compute CLV and 5G Upsell from Salesforce Contract data.
+runner: airflow
+model_version: v1
+airflow_version: 2.11.0
+owner: vini_dbt_project
+defaults:
+  project: bq-dataworkeragent-test
+  region: us-central1
+  executionConfig:
+    retries: 2
+triggers:
+  - type: schedule
+    scheduleInterval: 0 0 * * *
+    startTime: 2025-01-01T00:00:00
+    endTime: 2026-12-31T00:00:00
+    catchup: false
+    timezone: UTC
+actions:
+  - type: pipeline
+    name: run_dbt_models
+    engine: dbt
+    config:
+      executionMode: local
+      source:
+        path: /home/airflow/gcs/dags/vini_dbt_project
