@@ -1,3 +1,4 @@
 
 defaultProject: bq-dataworkeragent-test
 defaultDataset: dataform
+defaultLocation: us-central1
