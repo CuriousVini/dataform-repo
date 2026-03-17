@@ -26,10 +26,10 @@ function get_var() {
     export "$var_name"
 }
 
-get_var "_DEPLOY_VAR_CLIENT_ID"
-get_var "_DEPLOY_VAR_CLIENT_SECRET"
-get_var "_DEPLOY_VAR_MY_DOMAIN"
+get_var "_DEPLOY_VAR_SALESFORCE_CLIENT_ID"
+get_var "_DEPLOY_VAR_SALESFORCE_CLIENT_SECRET"
+get_var "_DEPLOY_VAR_SALESFORCE_MY_DOMAIN"
+get_var "MY_DATAFORM_SA"
 
 echo "Deploying to environment: dev..."
-gcloud orchestration-pipelines deploy --environment=dev \
-    --file=deployment.yaml
+gcloud orchestration-pipelines deploy --environment=dev

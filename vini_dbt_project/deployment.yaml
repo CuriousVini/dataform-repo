@@ -3,14 +3,7 @@ environments:
     project: bq-dataworkeragent-test
     region: us-central1
     resources:
-      - type: bigquery.dataset
-        name: salesforce_raw
-        definition:
-          location: '{{ region }}'
-          labels:
-            env: dev
-
-      - type: bigquerydatatransfer.transferConfig
+      - type: bigquerydatatransfer.TransferConfig
         name: salesforce_contract_ingestion
         definition:
           displayName: "Salesforce Contract Ingestion"
@@ -18,7 +11,17 @@ environments:
           schedule: "every 24 hours"
           destinationDatasetId: salesforce_raw
           params:
-            connector.authentication.oauth.clientId: _DEPLOY_VAR_CLIENT_ID
-            connector.authentication.oauth.clientSecret: _DEPLOY_VAR_CLIENT_SECRET
-            connector.authentication.oauth.myDomain: _DEPLOY_VAR_MY_DOMAIN
+            connector.authentication.oauth.clientId: _DEPLOY_VAR_SALESFORCE_CLIENT_ID
+            connector.authentication.oauth.clientSecret: _DEPLOY_VAR_SALESFORCE_CLIENT_SECRET
+            connector.authentication.oauth.myDomain: _DEPLOY_VAR_SALESFORCE_MY_DOMAIN
             assets: '["Contract"]'
+      - type: dataform.repository.workflowConfig
+        name: salesforce_ingestion_trigger
+        repository_name: salesforce_dbt_repo
+        definition:
+          releaseConfig: "projects/bq-dataworkeragent-test/locations/us-central1/repositories/salesforce_dbt_repo/releaseConfigs/default"
+          invocationConfig:
+            transitiveDependenciesIncluded: true
+            serviceAccount: "service-954904738192@gcp-sa-dataform.iam.gserviceaccount.com"
+          cronSchedule: "0 0 * * *"
+          timeZone: "America/Los_Angeles"
