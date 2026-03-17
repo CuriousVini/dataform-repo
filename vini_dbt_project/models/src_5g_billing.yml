@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: 5g_billing_dataset
+    database: bq-dataworkeragent-test
+    schema: 5g_billing_dataset
+    tables:
+      - name: dim_network_serviceability
+        description: "Spatially derived metrics representing 5G FWA coverage eligibility and cell tower capacities by ZIP code."
+      - name: fct_monthly_billing
+        description: "Customer billing records containing monthly recurring charges, ARPU, and contract status tracking."

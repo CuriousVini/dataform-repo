@@ -8,7 +8,7 @@ fi
 
 # Helper to prompt for missing variables and export them
 function get_var() {
-    local var_name="$1";
+    local var_name="$1"
     if [ -z "${!var_name}" ]; then
         # Try sourcing local env file if it exists
         if [ -f .env ]; then
@@ -26,14 +26,10 @@ function get_var() {
     export "$var_name"
 }
 
-# Prompt for all required _DEPLOY_VAR_ variables
-get_var "_DEPLOY_VAR_Salesforce_ClientId"
-get_var "_DEPLOY_VAR_Salesforce_ClientSecret"
+get_var "_DEPLOY_VAR_CLIENT_ID"
+get_var "_DEPLOY_VAR_CLIENT_SECRET"
+get_var "_DEPLOY_VAR_MY_DOMAIN"
 
-# Deploy using the deployment framework
 echo "Deploying to environment: dev..."
-# Use absolute path to deployment.yaml if needed, or relative if CWD is correct.
-# Assuming this script is run from the project root.
 gcloud orchestration-pipelines deploy --environment=dev \
-    --local \
     --file=deployment.yaml

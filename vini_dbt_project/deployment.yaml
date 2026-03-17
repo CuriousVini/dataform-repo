@@ -3,33 +3,22 @@ environments:
     project: bq-dataworkeragent-test
     region: us-central1
     resources:
-    - type: bigquery.dataset
-      name: salesforce_raw
-      definition:
-        location: us-central1
-        labels:
-          env: dev
-    - type: bigquery.dataset
-      name: salesforce_cleansed
-      definition:
-        location: us-central1
-        labels:
-          env: dev
-    - type: bigquerydatatransfer.transferConfig
-      name: salesforce
-      definition:
-        displayName: "Salesforce Ingestion"
-        dataSourceId: salesforce
-        schedule: "every 24 hours"
-        params:
-          connector.authentication.oauth.clientId: "{{ _DEPLOY_VAR_Salesforce_ClientId }}"
-          connector.authentication.oauth.clientSecret: "{{ _DEPLOY_VAR_Salesforce_ClientSecret }}"
-          # The discovery output says assets type is LIST.
-          # We'll try passing it as a JSON string array.
-          # Or comma-separated string?
-          # The description says "Salesforce objects to transfer represented as a list."
-          # Let's try YAML list first.
-          assets:
-          - AccountFeed
-          - AccountContactRole
-        destinationDatasetId: salesforce_raw
+      - type: bigquery.dataset
+        name: salesforce_raw
+        definition:
+          location: '{{ region }}'
+          labels:
+            env: dev
+
+      - type: bigquerydatatransfer.transferConfig
+        name: salesforce_contract_ingestion
+        definition:
+          displayName: "Salesforce Contract Ingestion"
+          dataSourceId: salesforce
+          schedule: "every 24 hours"
+          destinationDatasetId: salesforce_raw
+          params:
+            connector.authentication.oauth.clientId: _DEPLOY_VAR_CLIENT_ID
+            connector.authentication.oauth.clientSecret: _DEPLOY_VAR_CLIENT_SECRET
+            connector.authentication.oauth.myDomain: _DEPLOY_VAR_MY_DOMAIN
+            assets: '["Contract"]'

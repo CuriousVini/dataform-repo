@@ -4,9 +4,8 @@ sources:
   - name: salesforce
     database: bq-dataworkeragent-test
     schema: salesforce_raw
-    description: "Salesforce raw data source"
     tables:
+      - name: Contract
+        description: "Raw Salesforce Contract data ingested via BQ DTS"
       - name: AccountFeed
-        description: "Account Feed"
       - name: AccountContactRole
-        description: "Account Contact Role"
