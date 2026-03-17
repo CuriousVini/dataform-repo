@@ -1,0 +1,9 @@
+
+{
+  "name": "dataform",
+  "dependencies": {
+        "@dataform/compat-for-dbt":"dev",
+        "@dataform/compat-for-dbt-adapters":"dev",
+        "@dataform/compat-for-dbt-bigquery":"dev"
+  }
+}
