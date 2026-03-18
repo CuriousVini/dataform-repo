@@ -1,9 +1,16 @@
 with source as (
     select * from {{ source('salesforce_raw', 'Contract') }}
 ),
-renamed as (
+cleansed as (
     select
-        * -- TODO: Add specific column selection and cleansing once data is available
+        Id as contract_id,
+        AccountId as customer_id, -- Mapped to customer_id for easier join
+        Status as status,
+        StartDate as start_date,
+        EndDate as end_date,
+        TRIM(BillingPostalCode) as zip_code,
+        ContractTerm as contract_term
     from source
+    where Status = 'Activated'
 )
-select * from renamed
+select * from cleansed

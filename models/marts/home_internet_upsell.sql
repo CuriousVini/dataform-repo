@@ -4,8 +4,7 @@ with joined_data as (
 calculated as (
     select
         *,
-        -- Proposed CLV: ARPU * 12 (Annualized)
-        -- TODO: Verify CLV formula with user
+        -- Projected CLV: ARPU * 12 (Annualized)
         average_revenue_per_user_arpu * 12 as projected_clv
     from joined_data
 ),
@@ -14,7 +13,7 @@ upsell_target as (
     from calculated
     where
         is_5g_fwa_eligible = TRUE
-        -- Add additional conditions to identify targets
-        -- e.g., expected_download_speed_mbps > 100
+        -- Potential upsell targets: Eligible for 5G, but maybe not fully utilized
+        -- or high CLV potential.
 )
 select * from upsell_target
