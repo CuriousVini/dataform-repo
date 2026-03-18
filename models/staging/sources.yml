@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: salesforce
+    database: bq-dataworkeragent-test
+    schema: salesforce_ingest
+    tables:
+      - name: Contract
+
+  - name: billing
+    database: bq-dataworkeragent-test
+    schema: 5g_billing_dataset
+    tables:
+      - name: dim_network_serviceability
+      - name: fct_monthly_billing
