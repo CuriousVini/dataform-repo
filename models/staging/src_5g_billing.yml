@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: 5g_billing_dataset
+    database: bq-dataworkeragent-test
+    schema: 5g_billing_dataset
+    tables:
+      - name: dim_network_serviceability
+        description: "5G Network Coverage data"
+      - name: fct_monthly_billing
+        description: "Monthly billing data"

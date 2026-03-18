@@ -1,0 +1,44 @@
+environments:
+  dev:
+    project: bq-dataworkeragent-test
+    region: us-central1
+    variables:
+      project: bq-dataworkeragent-test
+      region: us-central1
+    secrets:
+      SF_CLIENT_ID: "projects/{{ project }}/secrets/SALESFORCE_CLIENT_ID/versions/latest"
+      SF_CLIENT_SECRET: "projects/{{ project }}/secrets/SALESFORCE_CLIENT_SECRET/versions/latest"
+      SF_MY_DOMAIN: "projects/{{ project }}/secrets/SALESFORCE_MY_DOMAIN/versions/latest"
+    resources:
+      - type: bigquery.dataset
+        name: salesforce_raw
+        definition:
+          location: {{ region }}
+      - type: bigquerydatatransfer.transferConfig
+        name: salesforce_transfer
+        definition:
+          displayName: "Salesforce Ingestion"
+          dataSourceId: salesforce
+          destinationDatasetId: salesforce_raw
+          params:
+            connector.authentication.oauth.clientId: "{{ SF_CLIENT_ID }}"
+            connector.authentication.oauth.clientSecret: "{{ SF_CLIENT_SECRET }}"
+            connector.authentication.oauth.myDomain: "{{ SF_MY_DOMAIN }}"
+            assets:
+              - Contract
+            ingestionType: "full"
+      - type: dataform.repository
+        name: salesforce_dbt_repo
+      - type: dataform.repository.releaseConfig
+        name: salesforce_release
+        parent: salesforce_dbt_repo
+        definition:
+          gitCommitish: "main"
+          codeCompilationConfig:
+            defaultDatabase: "{{ project }}"
+      - type: dataform.repository.workflowConfig
+        name: salesforce_workflow
+        parent: salesforce_dbt_repo
+        definition:
+          releaseConfig: "projects/{{ project }}/locations/{{ region }}/repositories/salesforce_dbt_repo/releaseConfigs/salesforce_release"
+          cronSchedule: "0 0 * * *"

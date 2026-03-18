@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: salesforce_raw
+    database: bq-dataworkeragent-test
+    schema: salesforce_raw
+    tables:
+      - name: Contract
+        description: "Raw Salesforce Contract data"
