@@ -1,0 +1,10 @@
+vini_dbt_project:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: oauth
+      project: bq-dataworkeragent-test
+      dataset: dbt_salesforce_upsell
+      location: us-central1
+      threads: 4

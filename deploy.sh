@@ -1,14 +1,12 @@
 #!/bin/bash
-#
-# This script deploys orchestration pipelines.
-
-# Exit immediately if a command exits with a non-zero status.
 set -e
 
-# Dry run to validate configuration
-echo "Running dry-run validation..."
-gcloud beta orchestration-pipelines deploy --environment=dev --dry-run
+if [[ -f ~/.bashrc ]]; then
+    source ~/.bashrc
+fi
 
-# Deploy using the deployment framework
+echo "Running dry-run validation..."
+gcloud beta orchestration-pipelines deploy --environment=dev --dry-run || exit 1
+
 echo "Deploying to environment: dev..."
 gcloud beta orchestration-pipelines deploy --environment=dev

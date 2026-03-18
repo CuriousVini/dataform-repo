@@ -8,27 +8,37 @@ environments:
     secrets:
       SF_CLIENT_ID: "projects/{{ project }}/secrets/SALESFORCE_CLIENT_ID/versions/latest"
       SF_CLIENT_SECRET: "projects/{{ project }}/secrets/SALESFORCE_CLIENT_SECRET/versions/latest"
-      SF_MY_DOMAIN: "projects/{{ project }}/secrets/SALESFORCE_MY_DOMAIN/versions/latest"
+      SF_DOMAIN: "projects/{{ project }}/secrets/SALESFORCE_MY_DOMAIN/versions/latest"
     resources:
+      # --- BigQuery ---
       - type: bigquery.dataset
         name: salesforce_raw
         definition:
           location: {{ region }}
+          labels:
+            env: dev
+
       - type: bigquerydatatransfer.transferConfig
-        name: salesforce_transfer
+        name: salesforce_ingestion
         definition:
-          displayName: "Salesforce Ingestion"
+          displayName: "Salesforce Contract Data Ingestion"
           dataSourceId: salesforce
+          schedule: "every 24 hours"
           destinationDatasetId: salesforce_raw
           params:
             connector.authentication.oauth.clientId: "{{ SF_CLIENT_ID }}"
             connector.authentication.oauth.clientSecret: "{{ SF_CLIENT_SECRET }}"
-            connector.authentication.oauth.myDomain: "{{ SF_MY_DOMAIN }}"
-            assets:
-              - Contract
+            connector.authentication.oauth.myDomain: "{{ SF_DOMAIN }}"
+            assets: ["Contract"]
             ingestionType: "full"
+
+      # --- Dataform ---
       - type: dataform.repository
         name: salesforce_dbt_repo
+        definition:
+          labels:
+            env: dev
+
       - type: dataform.repository.releaseConfig
         name: salesforce_release
         parent: salesforce_dbt_repo
@@ -36,9 +46,18 @@ environments:
           gitCommitish: "main"
           codeCompilationConfig:
             defaultDatabase: "{{ project }}"
+
       - type: dataform.repository.workflowConfig
         name: salesforce_workflow
         parent: salesforce_dbt_repo
         definition:
           releaseConfig: "projects/{{ project }}/locations/{{ region }}/repositories/salesforce_dbt_repo/releaseConfigs/salesforce_release"
+          invocationConfig:
+            transitiveDependenciesIncluded: true
           cronSchedule: "0 0 * * *"
+          timeZone: "America/Los_Angeles"
+
+      - type: dataform.repository.workspace
+        name: salesforce_workspace
+        parent: salesforce_dbt_repo
+        definition: {}
