@@ -23,12 +23,6 @@ environments:
             connector.authentication.oauth.myDomain: "{{ SALESFORCE_MY_DOMAIN }}"
             assets: ["Contract"]
 
-      - type: dataform.repository
-        name: salesforce_dbt_repo
-        definition:
-          labels:
-            managed_by: deployment_framework
-
       - type: dataform.repository.workflowConfig
         name: salesforce_workflow_config
         parent: salesforce_dbt_repo
