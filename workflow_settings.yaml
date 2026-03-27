@@ -1,4 +1,0 @@
-defaultProject: "bq-dataworkeragent-test"
-defaultLocation: "us-central1"
-defaultDataset: "salesforce_dataform"
-defaultAssertionDataset: "salesforce_dataform_assertions"

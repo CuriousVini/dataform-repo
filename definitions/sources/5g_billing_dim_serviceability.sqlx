@@ -1,7 +1,0 @@
-config {
-  type: "declaration",
-  database: "bq-dataworkeragent-test",
-  schema: "5g_billing_dataset",
-  name: "dim_network_serviceability",
-  description: "Dimension table mapping zip codes to 5G capability and utilitization."
-}

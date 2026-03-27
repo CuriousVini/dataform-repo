@@ -1,7 +1,0 @@
-config {
-  type: "declaration",
-  database: "bq-dataworkeragent-test",
-  schema: "salesforce_raw",
-  name: "Contract",
-  description: "Raw Salesforce Contract object containing customer tracking data."
-}
