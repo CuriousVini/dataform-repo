@@ -1,0 +1,29 @@
+config {
+  type: "table",
+  schema: "salesforce_dataform",
+  name: "upsell_5g_home_internet",
+  description: "Targeted 5G Home Internet Upsell list for eligible and active Salesforce contracts."
+}
+
+SELECT
+  c.account_id,
+  c.contract_id,
+  c.contract_number,
+  c.status,
+  c.billing_postal_code,
+  b.mrc,
+  b.arpu,
+  DATE_DIFF(c.end_date, CURRENT_DATE(), MONTH) AS remaining_months,
+  (b.arpu * DATE_DIFF(c.end_date, CURRENT_DATE(), MONTH)) AS projected_clv,
+  s.local_cell_tower_id,
+  s.tower_utilization_pct,
+  s.expected_download_speed_mbps
+FROM ${ref("stg_salesforce_contract")} AS c
+INNER JOIN ${ref("stg_5g_billing")} AS b
+  ON c.account_id = b.customer_id
+INNER JOIN ${ref("dim_network_serviceability")} AS s
+  ON c.billing_postal_code = s.zip_code
+WHERE c.status = 'Activated'
+  AND s.is_5g_fwa_eligible = true
+  AND s.tower_utilization_pct < 80.0
+  AND c.end_date > CURRENT_DATE()

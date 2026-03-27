@@ -1,0 +1,7 @@
+config {
+  type: "declaration",
+  database: "bq-dataworkeragent-test",
+  schema: "5g_billing_dataset",
+  name: "fct_monthly_billing",
+  description: "Monthly billing fact table for 5G metrics like ARPU and MRC."
+}
